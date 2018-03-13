@@ -37,8 +37,14 @@ std::vector<int> ver2(const std::vector<int> &vec, const int N, const int n) {
   cudaStream_t str[3];
   for (int i = 0; i < 3; ++i) {
     cudaStreamCreate(str + i);
+  }
+  for (int i = 0; i < 3; ++i) {
     cudaMemcpyAsync(a_d + n*i, a_h + n*i, sizeof(int) * n, cudaMemcpyHostToDevice, str[i]);
+  }
+  for (int i = 0; i < 3; ++i) {
     kernel<<<1024, 256, 0, str[i]>>>(a_d + n*i, b_d + n*i, n);
+  }
+  for (int i = 0; i < 3; ++i) {
     cudaMemcpyAsync(b_h + n*i, b_d + n*i, sizeof(int) * n, cudaMemcpyDeviceToHost, str[i]);
   }
   for (int i = 0; i < 3; ++i) {
